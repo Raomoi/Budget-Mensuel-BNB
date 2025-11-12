@@ -5,46 +5,58 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Budget mensuel</title>
 
-  <!-- PWA -->
+  <!-- PWA (laisse ces balises si tu es déjà en PWA) -->
   <link rel="manifest" href="./manifest.webmanifest">
-  <meta name="theme-color" content="#0f172a">
+  <meta name="theme-color" content="#ffffff">
   <link rel="icon" href="./icon-192.png">
   <link rel="apple-touch-icon" href="./icon-192.png">
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
 
   <style>
-    :root{--bg:#0f172a;--card:#111827;--muted:#94a3b8;--ok:#10b981;--bad:#ef4444;--accent:#38bdf8}
+    :root{
+      --bg:#ffffff;        /* fond clair */
+      --text:#231f20;      /* texte principal */
+      --card:#ffffff;      /* cartes */
+      --muted:#5b6166;     /* texte secondaire */
+      --accent:#ac7942;    /* ta couleur marque */
+      --ok:#10b981;        /* vert succès */
+      --bad:#ef4444;       /* rouge alerte */
+      --border:#e5e7eb;    /* bordures fines */
+      --shadow:0 8px 24px rgba(0,0,0,.08);
+    }
     *{box-sizing:border-box}
-    body{margin:0;background:var(--bg);color:white;font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Arial}
-    .wrap{max-width:900px;margin:auto;padding:24px}
-    h1{font-size:24px;margin:0 0 4px}
-    h2{font-size:18px;margin:0 0 10px}
+    body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Arial}
+    .wrap{max-width:960px;margin:auto;padding:24px}
+    h1{font-size:26px;margin:0 0 4px}
+    h2{font-size:20px;margin:0 0 10px}
     .small{font-size:12px;color:var(--muted)}
-    .card{background:var(--card);border-radius:16px;padding:18px;box-shadow:0 10px 30px rgba(0,0,0,.35);margin-bottom:16px}
-    @media(min-width:720px){.grid2{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}}
+    .card{background:var(--card);border-radius:16px;padding:18px;box-shadow:var(--shadow);border:1px solid var(--border);margin-bottom:16px}
+    @media(min-width:760px){.grid2{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}}
     label{display:block;font-size:13px;color:var(--muted);margin-bottom:6px}
-    input{width:100%;padding:12px 14px;border-radius:12px;border:1px solid #1f2937;background:#0b1220;color:white}
-    .pill{display:inline-block;padding:6px 10px;border-radius:999px;background:#0b1220;border:1px solid #1f2937;color:#cbd5e1;font-size:12px}
+    input{width:100%;padding:12px 14px;border-radius:12px;border:1px solid var(--border);background:#fff;color:var(--text)}
+    .pill{display:inline-block;padding:6px 10px;border-radius:999px;background:#fff;border:1px solid var(--border);color:var(--text);font-size:12px}
     .kpi{display:flex;flex-direction:column;gap:4px}
     .kpi .t{font-size:12px;color:var(--muted)}
     .kpi .v{font-weight:700;font-size:20px}
-    .kpi.bad .v{color:var(--bad)}
     .kpi.ok .v{color:var(--ok)}
-    .btn{background:var(--accent);color:#001018;border:none;border-radius:12px;padding:10px 14px;font-weight:700;cursor:pointer}
-    .btn.secondary{background:#0b1220;color:#e2e8f0;border:1px solid #1f2937}
-    .hr{height:1px;background:#1f2937;margin:12px 0}
-    .sub{font-size:13px;color:#cbd5e1;opacity:.9}
+    .kpi.bad .v{color:var(--bad)}
+    .btn{background:var(--accent);color:#fff;border:none;border-radius:12px;padding:10px 14px;font-weight:700;cursor:pointer}
+    .btn.secondary{background:#fff;color:var(--text);border:1px solid var(--border)}
+    .hr{height:1px;background:var(--border);margin:12px 0}
+    .sub{font-size:13px;color:var(--muted)}
     .toggle{display:flex;align-items:center;gap:10px;font-size:13px}
     .toggle input{width:auto}
-    .details{display:none;font-family:ui-monospace,Menlo,Consolas,monospace;background:#0b1220;border:1px solid #1f2937;border-radius:12px;padding:12px;white-space:pre-wrap}
+    .details{display:none;font-family:ui-monospace,Menlo,Consolas,monospace;background:#fff;border:1px solid var(--border);border-radius:12px;padding:12px;white-space:pre-wrap}
     .details.show{display:block}
-    .footer{opacity:.7;font-size:12px;margin-top:10px}
+    .footer{opacity:.8;font-size:12px;margin-top:10px;color:var(--muted)}
+    .brand{display:inline-flex;align-items:center;gap:8px}
+    .dot{width:10px;height:10px;border-radius:50%;background:var(--accent);display:inline-block}
   </style>
 </head>
 <body>
 <div class="wrap">
-  <h1>🧮 Budget mensuel</h1>
+  <h1 class="brand"><span class="dot"></span>Budget mensuel</h1>
   <div class="small" id="last_calc">Dernier calcul : —</div>
 
   <!-- Toggle détails -->
@@ -63,8 +75,8 @@
         <div><label>Heures / ménage (petit)</label><input type="number" id="h_petit" step="0.5" /></div>
         <div><label>Heures / ménage (grand)</label><input type="number" id="h_grand" step="0.5" /></div>
         <div><label>Taux horaire ménage (€)</label><input type="number" id="taux" step="0.01" /></div>
-        <div><label>Provision ménage par défaut (€)</label><input type="number" id="min_menage" step="0.01" /></div>
-        <div><label>Charges fixes mensuelles réservées (€)</label><input type="number" id="charges_fixes" step="0.01" /></div>
+        <div><label>Provision ménage / mois (€)</label><input type="number" id="min_menage" step="0.01" /></div>
+        <div><label>Charges fixes mensuelles (€)</label><input type="number" id="charges_fixes" step="0.01" /></div>
       </div>
       <div style="display:flex;gap:10px;margin-top:10px">
         <button class="btn secondary" id="reset">Réinitialiser paramètres</button>
@@ -76,11 +88,13 @@
   <!-- 1) Ménage -->
   <div class="card">
     <h2>1) Calcul du ménage</h2>
-    <div class="sub">Entre le nombre de séjours de chaque appartement.</div>
+    <div class="sub">Saisis tes séjours + le solde actuel du <b>compte ménage</b>.</div>
     <div class="grid2" style="margin-top:8px">
       <div><label>Séjours petit appart</label><input type="number" step="1" id="sejours_petit" /></div>
       <div><label>Séjours grand appart</label><input type="number" step="1" id="sejours_grand" /></div>
+      <div><label>Solde actuel du compte ménage (€)</label><input type="number" step="0.01" id="solde_compte_menage" /></div>
     </div>
+
     <div class="hr"></div>
     <div class="grid2">
       <div class="kpi"><div class="t">Heures petit</div><div class="v" id="h_petit_kpi">0 h</div></div>
@@ -88,18 +102,21 @@
       <div class="kpi"><div class="t">Heures totales</div><div class="v" id="h_tot">0 h</div></div>
       <div class="kpi"><div class="t">Coût ménage</div><div class="v" id="budget_menage">€ 0,00</div></div>
     </div>
+
     <div class="hr"></div>
     <div class="grid2">
-      <div class="kpi" id="delta_kpi"><div class="t">Écart vs provision ménage</div><div class="v" id="delta_menage">€ 0,00</div></div>
-      <div class="kpi"><div class="t">Provision utilisée</div><div class="v" id="min_menage_kpi">€ 0,00</div></div>
+      <div class="kpi"><div class="t">Avance sur ménage (solde + provision)</div><div class="v" id="avance_menage">€ 0,00</div></div>
+      <div class="kpi" id="solde_menage_kpi"><div class="t">Solde (avance − coût)</div><div class="v" id="solde_menage">€ 0,00</div></div>
+      <div class="kpi"><div class="t">À prélever sur Airbnb Incomes</div><div class="v" id="a_prelever_airbnb">€ 0,00</div></div>
     </div>
+
     <div id="details_menage" class="details"></div>
   </div>
 
   <!-- 2) Chiffre d'affaires -->
   <div class="card">
     <h2>2) Calcul du CA</h2>
-    <div class="sub">Basé sur les données Airbnb du mois en cours.</div>
+    <div class="sub">Données Airbnb du mois en cours + solde actuel du compte Airbnb Incomes.</div>
     <div class="grid2" style="margin-top:8px">
       <div><label>Déjà versé ce mois (€)</label><input type="number" step="0.01" id="deja_verse" /></div>
       <div><label>Reste à verser ce mois (€)</label><input type="number" step="0.01" id="reste_verser" /></div>
@@ -109,7 +126,7 @@
     <div class="grid2">
       <div class="kpi"><div class="t">CA du mois (versé + à verser)</div><div class="v" id="ca">€ 0,00</div></div>
       <div class="kpi"><div class="t">Solde mois précédent (estimé)</div><div class="v" id="solde_prec">€ 0,00</div></div>
-      <div class="kpi"><div class="t">Solde prévu fin de mois (après charges fixes)</div><div class="v" id="fin_mois_apres_charges">€ 0,00</div></div>
+      <div class="kpi"><div class="t">Fin de mois (après charges fixes)</div><div class="v" id="fin_mois_apres_charges">€ 0,00</div></div>
     </div>
     <div id="details_ca" class="details"></div>
   </div>
@@ -117,10 +134,10 @@
   <!-- 3) Solde du mois -->
   <div class="card">
     <h2>3) Solde du mois</h2>
-    <div class="sub">Solde prévu fin de mois <b>après charges fixes et ajustement ménage</b>.</div>
+    <div class="sub">Solde prévu fin de mois = <b>fin de mois (après charges fixes)</b> − <b>prélevé pour ménage</b>.</div>
     <div class="grid2" style="margin-top:8px">
       <div class="kpi" id="kpi_final"><div class="t">Solde fin de mois (après charges + ménage)</div><div class="v" id="final">€ 0,00</div></div>
-      <div class="kpi"><div class="t">Détail</div><div class="v" id="note" style="font-size:14px;font-weight:500;color:#cbd5e1">—</div></div>
+      <div class="kpi"><div class="t">Détail</div><div class="v" id="note" style="font-size:14px;font-weight:500;color:var(--muted)">—</div></div>
     </div>
     <div id="details_solde" class="details"></div>
   </div>
@@ -134,7 +151,7 @@ const fmt=n=>(n||0).toLocaleString('fr-FR',{style:'currency',currency:'EUR'});
 const f2=n=>(n||0).toLocaleString('fr-FR');
 
 const DEFAULTS={h_petit:2,h_grand:3,taux:29,min_menage:1050,charges_fixes:8103};
-const FIELDS=['sejours_petit','sejours_grand','deja_verse','reste_verser','solde_actuel'];
+const FIELDS=['sejours_petit','sejours_grand','solde_compte_menage','deja_verse','reste_verser','solde_actuel'];
 const PARAMS=Object.keys(DEFAULTS);
 
 function renderLastCalc(){
@@ -144,77 +161,94 @@ function renderLastCalc(){
     const d=JSON.parse(raw);
     const date=new Date(d.ts);
     $("last_calc").textContent='Dernier calcul : '+date.toLocaleString('fr-FR')+
-      ' · CA '+fmt(d.ca)+' · Δ ménage '+(d.delta_menage>=0?'+':'')+fmt(d.delta_menage)+
-      ' · Solde fin (après charges+ménage) '+fmt(d.final);
+      ' · CA '+fmt(d.ca)+' · Prélevé ménage '+fmt(d.prelevement)+
+      ' · Solde fin '+fmt(d.final);
   }catch{$("last_calc").textContent='Dernier calcul : —';}
 }
 
 function setDetailsVisible(on){["details_menage","details_ca","details_solde"].forEach(id=>$(id).classList.toggle('show',!!on));}
 
 function compute(persist=true){
-  // Ménage
+  // 1) Ménage
   const sp=parseInt($("sejours_petit").value)||0;
   const sg=parseInt($("sejours_grand").value)||0;
+  const soldeMenage=parseFloat($("solde_compte_menage").value)||0;
+
   const hp=parseFloat($("h_petit").value)||DEFAULTS.h_petit;
   const hg=parseFloat($("h_grand").value)||DEFAULTS.h_grand;
   const taux=parseFloat($("taux").value)||DEFAULTS.taux;
-  const min=parseFloat($("min_menage").value)||DEFAULTS.min_menage;
-  const fix=parseFloat($("charges_fixes").value)||DEFAULTS.charges_fixes;
+  const provision=parseFloat($("min_menage").value)||DEFAULTS.min_menage;
+  const chargesFixes=parseFloat($("charges_fixes").value)||DEFAULTS.charges_fixes;
 
-  const hpT=sp*hp, hgT=sg*hg, hTot=hpT+hgT, cost=hTot*taux, delta=cost-min;
-  $("h_petit_kpi").textContent=f2(hpT)+' h';
-  $("h_grand_kpi").textContent=f2(hgT)+' h';
+  const hPetit=sp*hp, hGrand=sg*hg, hTot=hPetit+hGrand;
+  const coutMenage=hTot*taux;
+
+  const avanceMenage = soldeMenage + provision;               // (solde compte ménage + provision mensuelle)
+  const soldeApres   = avanceMenage - coutMenage;             // peut être négatif
+  const aPreleverAirbnb = Math.max(0, coutMenage - avanceMenage); // ce qu’il manque
+
+  $("h_petit_kpi").textContent=f2(hPetit)+' h';
+  $("h_grand_kpi").textContent=f2(hGrand)+' h';
   $("h_tot").textContent=f2(hTot)+' h';
-  $("budget_menage").textContent=fmt(cost);
-  $("delta_menage").textContent=(delta>=0?'+ ':'')+fmt(delta);
-  $("min_menage_kpi").textContent=fmt(min);
-  const node=$("delta_kpi");node.classList.remove('ok','bad');if(delta<=0)node.classList.add('ok');else node.classList.add('bad');
+  $("budget_menage").textContent=fmt(coutMenage);
+  $("avance_menage").textContent=fmt(avanceMenage);
+  $("solde_menage").textContent=(soldeApres>=0?'+ ':'')+fmt(soldeApres);
+  $("a_prelever_airbnb").textContent=fmt(aPreleverAirbnb);
 
-  // CA
+  const soldeNode=$("solde_menage_kpi"); soldeNode.classList.remove('ok','bad');
+  if(soldeApres>=0) soldeNode.classList.add('ok'); else soldeNode.classList.add('bad');
+
+  // 2) CA (inchangé sauf impact en 3))
   const deja=parseFloat($("deja_verse").value)||0;
   const reste=parseFloat($("reste_verser").value)||0;
   const soldeActuel=parseFloat($("solde_actuel").value)||0;
+
   const ca=deja+reste;
-  const soldePrec=soldeActuel-deja;           // hypothèse: compte dédié aux versements Airbnb
-  const finMoisApresCharges=soldePrec+ca-fix;
+  const soldePrec=soldeActuel-deja;                  // hypothèse: compte dédié aux versements Airbnb
+  const finMoisApresCharges=soldePrec+ca-chargesFixes;
 
   $("ca").textContent=fmt(ca);
   $("solde_prec").textContent=fmt(soldePrec);
   $("fin_mois_apres_charges").textContent=fmt(finMoisApresCharges);
 
-  // Solde final après ménage
-  const final=finMoisApresCharges - delta;
+  // 3) Solde final en déduisant ce qu'il faut prélever pour le ménage
+  const final = finMoisApresCharges - aPreleverAirbnb;
   $("final").textContent=fmt(final);
-  const kpi=$("kpi_final");kpi.classList.remove('ok','bad');
-  let note=`Solde préc. ${fmt(soldePrec)} · CA ${fmt(ca)} · Charges ${fmt(fix)} · Δ ménage ${(delta>=0?'+':'')+fmt(delta)}`;
-  if(final>=0){kpi.classList.add('ok');note='Bénéfice prévu. '+note;}else{kpi.classList.add('bad');note='Déficit prévu. '+note;}
+  const kpi=$("kpi_final"); kpi.classList.remove('ok','bad');
+  let note=`Fin (après charges) ${fmt(finMoisApresCharges)} − Prélevé ménage ${fmt(aPreleverAirbnb)} = ${fmt(final)}`;
+  if(final>=0){kpi.classList.add('ok'); note='Bénéfice prévu. '+note;} else {kpi.classList.add('bad'); note='Déficit prévu. '+note;}
   $("note").textContent=note;
 
-  // Détails
+  // Détails si affichés
   const show=$("toggle_details").checked;
   if(show){
     $("details_menage").textContent =
-      `— Ménage —\nPetit: ${sp} × ${hp}h = ${f2(hpT)}h\nGrand: ${sg} × ${hg}h = ${f2(hgT)}h\n`+
-      `Total = ${f2(hTot)}h\nCoût = ${fmt(cost)}\nProvision = ${fmt(min)}\nΔ (coût − provision) = ${(delta>=0?'+':'')+fmt(delta)}`;
+      `— Ménage —\n`+
+      `Petit: ${sp} × ${hp}h = ${f2(hPetit)}h\nGrand: ${sg} × ${hg}h = ${f2(hGrand)}h\n`+
+      `Total heures = ${f2(hTot)}h\nCoût ménage = ${fmt(coutMenage)}\n`+
+      `Solde compte ménage = ${fmt(soldeMenage)}\nProvision du mois = ${fmt(provision)}\n`+
+      `Avance ménage = ${fmt(avanceMenage)}\nSolde (avance − coût) = ${(soldeApres>=0?'+ ':'')+fmt(soldeApres)}\n`+
+      `À prélever sur Airbnb Incomes = ${fmt(aPreleverAirbnb)}`;
     $("details_ca").textContent =
-      `— CA —\nDéjà versé = ${fmt(deja)}\nReste à verser = ${fmt(reste)}\nCA du mois = ${fmt(ca)}\n`+
-      `Solde actuel = ${fmt(soldeActuel)}\nSolde préc. estimé = ${fmt(soldePrec)}\n`+
-      `Charges fixes = ${fmt(fix)}\nFin de mois (après charges) = ${fmt(finMoisApresCharges)}`;
+      `— CA —\nDéjà versé = ${fmt(deja)}\nReste à verser = ${fmt(reste)}\n`+
+      `CA du mois = ${fmt(ca)}\nSolde actuel = ${fmt(soldeActuel)}\n`+
+      `Solde préc. estimé = ${fmt(soldePrec)}\nCharges fixes = ${fmt(chargesFixes)}\n`+
+      `Fin de mois (après charges) = ${fmt(finMoisApresCharges)}`;
     $("details_solde").textContent =
-      `— Solde —\nFin (après charges) − Δ ménage = ${fmt(finMoisApresCharges)} − ${(delta>=0?'+':'')+fmt(delta)} = ${fmt(final)}`;
+      `— Solde —\nFin (après charges) − Prélevé ménage = ${fmt(finMoisApresCharges)} − ${fmt(aPreleverAirbnb)} = ${fmt(final)}`;
   }
 
+  // Sauvegarde « dernier calcul »
   if(persist){
     localStorage.setItem('budget:last_calc', JSON.stringify({
-      ts:Date.now(), ca, delta_menage:delta, final,
-      solde_prec:soldePrec, fin_apres_charges:finMoisApresCharges
+      ts:Date.now(), ca, final, prelevement:aPreleverAirbnb
     }));
     renderLastCalc();
   }
 }
 
 function load(){
-  // paramètres préremplis
+  // paramètres (préremplis aux défauts si vides)
   PARAMS.forEach(k=>{
     const v=localStorage.getItem('budget:'+k);
     $(k).value = v!==null ? v : DEFAULTS[k];
@@ -250,7 +284,7 @@ $("reset").addEventListener('click',()=>{
 renderLastCalc(); load();
 </script>
 
-<!-- Enregistrement du Service Worker -->
+<!-- Enregistrement du Service Worker (laisse si PWA) -->
 <script>
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
